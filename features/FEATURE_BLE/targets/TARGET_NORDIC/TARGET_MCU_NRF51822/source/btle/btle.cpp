@@ -234,7 +234,7 @@ static void btle_handler(ble_evt_t *p_ble_evt)
             gap.processAdvertisementReport(scanReport->peer_addr.addr,
                                            scanReport->rssi,
                                            1,
-                                           scanReport->peer_addr.addr_type,
+                                           static_cast<GapAdvertisingParams::AdvertisingType_t>(scanReport->peer_addr.addr_type),
                                            0,
                                            NULL);
             break;
