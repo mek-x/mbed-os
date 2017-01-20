@@ -122,7 +122,7 @@ error_t btle_init(void)
 
     // register softdevice handler vector
     NVIC_SetVector(SD_EVT_IRQn, (uint32_t) SD_EVT_IRQHandler);
-    
+
     // Configure the LF clock according to values provided by btle_clock.h.
     // It is input from the chain of the yotta configuration system.
     clockConfiguration.source        = LFCLK_CONF_SOURCE;
@@ -164,6 +164,11 @@ error_t btle_init(void)
     if (softdevice_enable(&ble_enable_params) != NRF_SUCCESS) {
         return ERROR_INVALID_PARAM;
     }
+
+    ble_opt_t ble_opt;
+    ble_opt.gap_opt.scan_req_report.enable = 1;
+
+    sd_ble_opt_set(BLE_GAP_OPT_SCAN_REQ_REPORT, &ble_opt);
 
     ble_gap_addr_t addr;
     if (sd_ble_gap_address_get(&addr) != NRF_SUCCESS) {
@@ -286,6 +291,17 @@ static void btle_handler(ble_evt_t *p_ble_evt)
                                            static_cast<GapAdvertisingParams::AdvertisingType_t>(advReport->type),
                                            advReport->dlen,
                                            advReport->data);
+            break;
+        }
+
+        case BLE_GAP_EVT_SCAN_REQ_REPORT: {
+            const ble_gap_evt_scan_req_report_t *scanReport = &p_ble_evt->evt.gap_evt.params.scan_req_report;
+            gap.processAdvertisementReport(scanReport->peer_addr.addr,
+                                           scanReport->rssi,
+                                           1,
+                                           static_cast<GapAdvertisingParams::AdvertisingType_t>(scanReport->peer_addr.addr_type),
+                                           0,
+                                           NULL);
             break;
         }
 

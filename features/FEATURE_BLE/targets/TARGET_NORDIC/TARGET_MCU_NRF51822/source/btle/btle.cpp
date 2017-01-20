@@ -109,6 +109,11 @@ error_t btle_init(void)
         return ERROR_INVALID_PARAM;
     }
 
+    ble_opt_t ble_opt;
+    ble_opt.gap_opt.scan_req_report.enable = 1;
+
+    sd_ble_opt_set(BLE_GAP_OPT_SCAN_REQ_REPORT, &ble_opt);
+
     ble_gap_addr_t addr;
     if (sd_ble_gap_address_get(&addr) != NRF_SUCCESS) {
         return ERROR_INVALID_PARAM;
@@ -223,6 +228,18 @@ static void btle_handler(ble_evt_t *p_ble_evt)
                                            advReport->data);
             break;
         }
+
+        case BLE_GAP_EVT_SCAN_REQ_REPORT: {
+            const ble_gap_evt_scan_req_report_t *scanReport = &p_ble_evt->evt.gap_evt.params.scan_req_report;
+            gap.processAdvertisementReport(scanReport->peer_addr.addr,
+                                           scanReport->rssi,
+                                           1,
+                                           scanReport->peer_addr.addr_type,
+                                           0,
+                                           NULL);
+            break;
+        }
+
 
         default:
             break;
