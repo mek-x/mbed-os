@@ -1381,7 +1381,8 @@
         "detect_code": ["0770"],
         "device_has_add": ["ANALOGOUT", "LOWPOWERTIMER", "SERIAL_FC", "SERIAL_ASYNCH", "CAN", "TRNG", "FLASH"],
         "release_versions": ["2", "5"],
-        "device_name": "STM32L432KC"
+        "device_name": "STM32L432KC",
+        "bootloader_supported": true
     },
     "NUCLEO_L476RG": {
         "inherits": ["FAMILY_STM32"],
